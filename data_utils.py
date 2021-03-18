@@ -32,7 +32,7 @@ def line_color(val, min_d=1, max_d=64):
     print Color(HSV's H value) corresponding to laser id
     """
     alter_num = 4
-    return (((val - min_d)%alter_num) * 127/alter_num).astype(np.uint8)
+    return int((((val - min_d)%alter_num) * 127/alter_num))
 
 
 
