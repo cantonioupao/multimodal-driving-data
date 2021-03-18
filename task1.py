@@ -118,5 +118,9 @@ def BEV_from_cloud(points, saveto , side_range = 0,fwd_range= 0,res = 0 ,min_hei
     
 
 
-#Convert the 3D Lidar points to BEV view
-BEV_from_cloud(velodyne , res = 0.2 , saveto = "")
+def main():
+    #Convert the 3D Lidar points to BEV view
+    BEV_from_cloud(velodyne , res = 0.2 , saveto = "")
+
+if __name__ == "__main__":
+    main()
