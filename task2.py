@@ -6,11 +6,7 @@ import cv2
 from vispy.color import ColorArray
 from PIL import Image
 
-print("So let's start the task")
-data_path = os.path.join("./data", "demo.p") # change to data.p for submission
-data = load_data(data_path)
-velodyne =  data['velodyne']
-objects = data['objects']
+
 
 
 
@@ -90,8 +86,9 @@ def draw_bbox( img , objects , R1 , R2 ):
 
 
 
-def project_lidar_data_on_image(data  , objects , bbox = "no"):
-    img = data["image_2"]
+def project_lidar_data_on_image(data  , objects , img , bbox = "no"):
+    ''' This method inputs the data to get all the matrices, as well as the object array for segmentation
+    also it has a flag for bbox drawing. Finally, it has an image input (uint8)((height,width ,3)) '''
     R1 = data["T_cam2_velo"] # this consitutes our extrinsic parameters matrix
     R2 = data["P_rect_20"] #this constitues our intrinsic parameters matrix
     # Both R1 and R2 constitute the camera calibration of our scene that helps project the 3D lidar points to a 2D image plane
@@ -100,6 +97,7 @@ def project_lidar_data_on_image(data  , objects , bbox = "no"):
     # Forward direction only => Filter out the points of the backward direction
     ind = points[:,0]>=0 # keep only the points that have an x>=0
     points = points[ind] #keep the points only with the corresponding indeces
+    #this will be used for the laser id
     label_clip = data['sem_label'][ind] # get the semantic labels for each point of the cloud
 
 
@@ -122,22 +120,8 @@ def project_lidar_data_on_image(data  , objects , bbox = "no"):
 
     print("The final 2D projected data have shape ", P_2.shape)
 
-    P_2 = P_2.astype(int)
+    P_2 = P_2.astype(int) #this are all the 2D projected data
 
-
-    #Get image and display it
-    img = data['image_2']
-    print( "our image is ", img.dtype)
-    img = np.uint8(img) #convert uint32 to uint8 with RGB channels
-    print( "our image is ", img.dtype)
-
-    '''#Cv2 display
-    cv2.imshow('image' , img)
-    cv2.waitKey(2000)
-
-    #PIL method 
-    image= Image.fromarray(img, "RGB")
-    image.show("hey")'''
 
 
     #Check the pixel values for each point
@@ -151,11 +135,12 @@ def project_lidar_data_on_image(data  , objects , bbox = "no"):
     ind_y = np.logical_and(P_2[:,0] < img.shape[1], P_2[:,0] >= 0) # why are u,v reversed in the P_2 shape ?
     ind_z = P_2[:,-1]>=0
     ind = np.logical_and(ind_x,ind_y) # we want first criterion t be true , as well as the second 
-    #ind = np.logical_and(ind,ind_z) # not sure if this one is needed
+    ind = np.logical_and(ind,ind_z) # not sure if this one is needed
 
 
     #Convert the index to integer
-    projected_cloud_pixels = P_2[ind]
+    projected_cloud_pixels = P_2[ind] # projected 3D cloud lidar points on 2D image
+    points = points[ind] # these are the corresponding 3D lidar points shown in the image
     label_clip = label_clip[ind]
     print("The label segmentation matrix has the numeric segmentation labels , e.g for point 1", label_clip[0])
 
@@ -187,9 +172,15 @@ def project_lidar_data_on_image(data  , objects , bbox = "no"):
         img  = draw_bbox(img , objects , R1 , R2)
         
 
-    #PIL method 
-    image= Image.fromarray(img, "RGB")
-    image.show("hey")
+    img_array = img
+    
+
+
+    return points ,projected_cloud_pixels , img_array
+
+
+
+
 
 
 
@@ -200,4 +191,30 @@ def project_lidar_data_on_image(data  , objects , bbox = "no"):
 
 
 ########################################### MAIN ################################
-project_lidar_data_on_image(data , objects , bbox = 'yes')
+def main():
+    print("So let's start the task")
+    data_path = os.path.join("./data", "demo.p") # change to data.p for submission
+    data = load_data(data_path)
+    velodyne =  data['velodyne']
+    objects = data['objects']
+    #Get image and display it
+    image= data['image_2']
+    print( "our image is ", image.dtype)
+    image = np.uint8(image) #convert uint32 to uint8 with RGB channels
+    print( "our image is ", image.dtype , " with shape " , image.shape)
+    image_original = np.copy(image)
+
+    '''#Cv2 display
+    cv2.imshow('image' , img)
+    cv2.waitKey(2000) 
+    #PIL method 
+    image= Image.fromarray(image, "RGB")
+    image.show("hey") '''
+    lidar_points , projected_points , output_image_array  = project_lidar_data_on_image(data , objects , image , bbox = 'no')
+    #PIL method 
+    image= Image.fromarray(output_image_array, "RGB")
+    image.show("POINT CLOUD ON IMAGE TASK 2")       
+
+
+if __name__ == "__main__":
+    main()
