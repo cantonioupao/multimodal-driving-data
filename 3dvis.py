@@ -83,28 +83,32 @@ if __name__ == '__main__':
     # Finding the bbox
     # TODO: Clip the point to the edge
     # (N,8,3) dimension array of corners
-    # corners = np.empty([objects.shape[0],8,3])
-    # for i,individual in enumerate(objects):
-    #     # Height, Width, Length 
-    #     dimension = np.array(individual[8:11])
-    #     # Right, Down, Front (X,Y,Z)
-    #     location = np.array(individual[11:14])
-    #     rotation_y = individual[14]
-    #     corner = np.zeros([8,3])
-    #     corner[0,:] = location + np.array([dimension[2]/2,-dimension[0],dimension[1]/2])
-    #     corner[1,:] = corner[0,:] + np.array([-dimension[-1],0,0])
-    #     corner[2,:] = corner[1,:] + np.array([0,0,-dimension[1]])
-    #     corner[3,:] = corner[2,:] + np.array([dimension[2],0,0])
-    #     corner[4,:] = corner[0,:] + np.array([0,dimension[0],0])
-    #     corner[5,:] = corner[4,:] + np.array([0,0,-dimension[1]])
-    #     corner[6,:] = corner[5,:] + np.array([0,0,-dimension[1]])
-    #     corner[7,:] = corner[6,:] + np.array([dimension[2],0,0])
-    #     # Rotate along the y-axis
-    #     R = np.array([[np.cos(rotation_y),0,np.sin(rotation_y),0],[0,1,0,0],[-np.sin(rotation_y),0,np.cos(rotation_y),0],[0,0,0,1])
-    #     for ind,point in enunmerate(corner):
-    #         corner[ind,:] = np.dot(R,point)
-    #     corners[i,:,:] = corner
-    
+    corners = np.empty([len(data['objects']),8,3])
+    i = 0
+    for individual in data['objects']:
+        # Height, Width, Length 
+        dimension = np.array(individual[8:11])
+        # Right, Down, Front (X,Y,Z)
+        location = np.array(individual[11:14])
+        rotation_y = individual[14]
+        corner = np.zeros([8,3])
+        corner[0,:] = location + np.array([dimension[2]/2,-dimension[0],dimension[1]/2])
+        corner[1,:] = corner[0,:] + np.array([-dimension[-1],0,0])
+        corner[2,:] = corner[1,:] + np.array([0,0,-dimension[1]])
+        corner[3,:] = corner[2,:] + np.array([dimension[2],0,0])
+        corner[4,:] = corner[0,:] + np.array([0,dimension[0],0])
+        corner[5,:] = corner[4,:] + np.array([0,0,-dimension[1]])
+        corner[6,:] = corner[5,:] + np.array([0,0,-dimension[1]])
+        corner[7,:] = corner[6,:] + np.array([dimension[2],0,0])
+        # Rotate along the y-axis
+        #R = np.array([[np.cos(rotation_y),0,np.sin(rotation_y),0],[0,1,0,0],[-np.sin(rotation_y),0,np.cos(rotation_y),0],[0,0,0,1]])
+        #ind = 0
+        #for point in corner:
+        #    corner[ind,:] = np.dot(R,point)
+        #    ind += 1
+        corners[i,:,:] = corner
+        i += 1
+    visualizer.update_boxes(corners)
     vispy.app.run()
 
 

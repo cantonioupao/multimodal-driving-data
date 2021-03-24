@@ -35,7 +35,7 @@ def draw_line_between_pts(img, image_corners):
 
 
 # Goal: draw a bbox on the image
-# Parambeeeeb: img = the image on which bbox would be drawn
+# Param: img = the image on which bbox would be drawn
 #        objects = the object list
 #        R1 = extrinsic matrix, unused as we would create T for extrinsic matrix
 #        R2 = intrinsic matrix
