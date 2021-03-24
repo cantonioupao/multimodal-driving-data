@@ -193,7 +193,7 @@ def project_lidar_data_on_image(data  , objects , img , bbox = "no"):
 ########################################### MAIN ################################
 def main():
     print("So let's start the task")
-    data_path = os.path.join("./data", "demo.p") # change to data.p for submission
+    data_path = os.path.join("./data", "data.p") # change to data.p for submission
     data = load_data(data_path)
     velodyne =  data['velodyne']
     objects = data['objects']
@@ -210,8 +210,7 @@ def main():
     #PIL method 
     image= Image.fromarray(image, "RGB")
     image.show("hey") '''
-    lidar_points , projected_points , output_image_array  = project_lidar_data_on_image(data , objects , image , bbox = 'no')
-    #PIL method 
+    lidar_points , projected_points , output_image_array  = project_lidar_data_on_image(data , objects , image , bbox = 'yes')#PIL method 
     image= Image.fromarray(output_image_array, "RGB")
     image.show("POINT CLOUD ON IMAGE TASK 2")       
 
