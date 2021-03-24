@@ -6,10 +6,10 @@ import cv2
 from vispy.color import ColorArray
 from PIL import Image
 
-
-
-
-
+# Goal: draw lines between box vertices
+# Input: img = the image on which bbox would be drawn
+#        image_corners = the list of 3d bbox vertices 
+# Output: an image with bbod drawn on it
 def draw_line_between_pts(img, image_corners):
     thickness = 2
     color = (0,255,0)
@@ -34,6 +34,12 @@ def draw_line_between_pts(img, image_corners):
     return img
 
 
+# Goal: draw a bbox on the image
+# Parambeeeeb: img = the image on which bbox would be drawn
+#        objects = the object list
+#        R1 = extrinsic matrix, unused as we would create T for extrinsic matrix
+#        R2 = intrinsic matrix
+# Output: an image with all bboxes 
 def draw_bbox( img , objects , R1 , R2 ):
     number_of_objects = len(objects) # number of objects 
     corners = np.empty([number_of_objects,8,3]) # array that will hold all objects corners in 3D world coordinates
@@ -71,8 +77,12 @@ def draw_bbox( img , objects , R1 , R2 ):
         corners[i,:,:] = corner
         i += 1
     #R = data['P_rect_00']
+    # T = A homogeneous translation matrix of 4x4 dimension
+    # Used to transform cam0 -> cam2
     T = np.eye(4)
     T[0,3] = 0.06
+
+    # Loop over each corner lists 
     for bbox in corners:
         for ind,pt in enumerate(bbox):
             pos = np.dot(np.dot(R2,T),np.concatenate((pt,[1])))
@@ -80,7 +90,9 @@ def draw_bbox( img , objects , R1 , R2 ):
             pos = pos.astype(int)
             bbox[ind]=pos
     
+    # Casting pixels into integer points
     corners = corners.astype(int,copy=False)
+    # Draw lines between them
     img = draw_line_between_pts(img , corners)
     return img  
 
@@ -180,20 +192,10 @@ def project_lidar_data_on_image(data  , objects , img , bbox = "no"):
 
 
 
-
-
-
-
-
-
-
-
-
-
 ########################################### MAIN ################################
 def main():
     print("So let's start the task")
-    data_path = os.path.join("./data", "demo.p") # change to data.p for submission
+    data_path = os.path.join("./data", "data.p") # change to data.p for submission
     data = load_data(data_path)
     velodyne =  data['velodyne']
     objects = data['objects']
@@ -210,7 +212,7 @@ def main():
     #PIL method 
     image= Image.fromarray(image, "RGB")
     image.show("hey") '''
-    lidar_points , projected_points , output_image_array  = project_lidar_data_on_image(data , objects , image , bbox = 'no')
+    lidar_points , projected_points , output_image_array  = project_lidar_data_on_image(data , objects , image , bbox = 'yes')
     #PIL method 
     image= Image.fromarray(output_image_array, "RGB")
     image.show("POINT CLOUD ON IMAGE TASK 2")       
