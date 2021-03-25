@@ -71,7 +71,7 @@ def calib_cam2cam(filepath, mode):
     """
     with open(filepath, "r") as f:
         file = f.readlines()
-        P_ = 0
+        R= 0
         P_rect = 0
 
         for line in file:
@@ -81,12 +81,13 @@ def calib_cam2cam(filepath, mode):
                 P_rect = P_rect.reshape(3, 4)
                 # erase 4th column ([0,0,0])
                 P_rect = P_rect[:3, :3]
-            else if key == ('P_' + mode):
-                P_ = np.fromstring(val, sep=' ')
-                P_ = P_.reshape(3, 4)
-                # erase 4th column ([0,0,0])
-                P_ = P_[:3, :3]
-    return P_rect , P_
+                print("Check")
+            if key == ('R_00'):
+                R= np.fromstring(val, sep=' ')
+                R = R.reshape(3, 3)
+                print("Check")
+                
+    return P_rect , R
 
 
 
