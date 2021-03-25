@@ -208,7 +208,7 @@ def project_lidar_data_on_image(data  , objects , img , bbox = "no"):
 ########################################### MAIN ################################
 def main():
     print("So let's start the task")
-    data_path = os.path.join("./data", "demo.p") # change to data.p for submission
+    data_path = os.path.join("./data", "data.p") # change to data.p for submission
     data = load_data(data_path)
     velodyne =  data['velodyne']
     objects = data['objects']

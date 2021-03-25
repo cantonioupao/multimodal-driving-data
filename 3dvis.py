@@ -74,7 +74,7 @@ class Visualizer():
                               color=[0,1,0,1])
 
 if __name__ == '__main__':
-    data = load_data('data/demo.p') # Change to data.p for your final submission 
+    data = load_data('data/data.p') # Change to data.p for your final submission 
     visualizer = Visualizer()
     visualizer.update(data['velodyne'][:,:3])
     '''
@@ -158,7 +158,7 @@ class Visualizer():
 		                           [2,1],[2,3],[2,6],
 		                           [5,1],[5,4],[5,6],
 		                           [7,3],[7,4],[7,6]])
-		self.data = load_data('data/demo.p') # Change to data.p for your final submission 
+		self.data = load_data('data/data.p') # Change to data.p for your final submission 
 	def update(self, points):
 		'''
 		:param points: point cloud data
@@ -203,7 +203,7 @@ class Visualizer():
 		                      color=[0,1,0,1])
 
 if __name__ == '__main__':
-	data = load_data('data/demo.p') # Change to data.p for your final submission 
+	data = load_data('data/data.p') # Change to data.p for your final submission 
 	visualizer = Visualizer()
 	visualizer.update(data['velodyne'][:,:3])
 	'''
