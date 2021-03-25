@@ -226,7 +226,9 @@ def main():
     image= Image.fromarray(image, "RGB")
     image.show("hey") '''
     lidar_points , projected_points , output_image_array  = project_lidar_data_on_image(data , objects , image , bbox = 'yes')
-    #PIL method 
+    #save image
+    cv2.imwrite("task2.jpg" , output_image_array) 
+    #PIL method
     image= Image.fromarray(output_image_array, "RGB")
     image.show("POINT CLOUD ON IMAGE TASK 2")       
 

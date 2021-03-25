@@ -17,7 +17,7 @@ def range_of(array):
     min_ = np.amin(array)
     return tuple([min_,max_])
 
-def project_laser_id(points , projected_points , img):
+def project_laser_id(points , projected_points , img , save):
     ''' this method receives the lidar point cloud, 
         as well as the corresponding 2D projected points on the image '''
 
@@ -83,6 +83,10 @@ def project_laser_id(points , projected_points , img):
         id += 1
     
 
+
+    #Check if you need to save the image
+    if(save == 1):
+        cv2.imwrite("task3.jpg" , img)
     #PIL method - Show pic with lines of search
     image= Image.fromarray(img, "RGB")
     image.show("TASK 3 - LASER ID ON IMAGE")
@@ -104,7 +108,7 @@ def main():
     print( "our image is ", image.dtype , " with shape " , image.shape)
     image_original = np.copy(image)
     lidar_points , projected_points , output_image  = project_lidar_data_on_image(data , objects , image , bbox = 'no')
-    output2_image = project_laser_id(lidar_points ,projected_points , image_original)
+    output2_image = project_laser_id(lidar_points ,projected_points , image_original , save = 1)
 
 
 if __name__ == "__main__":
