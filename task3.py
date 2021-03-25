@@ -86,7 +86,7 @@ def project_laser_id(points , projected_points , img , save):
 
     #Check if you need to save the image
     if(save == 1):
-        cv2.imwrite("task3.jpg" , img)
+        cv2.imwrite("task3.jpg" ,cv2.cvtColor(img, cv2.COLOR_RGB2BGR)) #the image is expressed as BGR , so convert when saving
     #PIL method - Show pic with lines of search
     image= Image.fromarray(img, "RGB")
     image.show("TASK 3 - LASER ID ON IMAGE")
