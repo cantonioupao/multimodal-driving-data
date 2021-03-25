@@ -38,6 +38,7 @@ class Visualizer():
         Task 2: Change this function such that each point
         is colored depending on its semantic label
         '''
+        
         color = np.empty([points.shape[0],3])
         for ind,label in enumerate(self.data['sem_label']):
             color[ind,:] = self.data['color_map'][label[0]]
@@ -88,24 +89,33 @@ if __name__ == '__main__':
     for individual in data['objects']:
         # Height, Width, Length 
         dimension = np.array(individual[8:11])
-        # Right, Down, Front (X,Y,Z)
+        bbox_height = dimension[0]
+        bbox_width = dimension[1]
+        bbox_length =  dimension[2]
+        # # Right, Down, Front (X,Y,Z)
         location = np.array(individual[11:14])
+        bbox_x = location[0]
+        bbox_y = location[1]
+        bbox_z = location[2]
         rotation_y = individual[14]
         corner = np.zeros([8,3])
-        corner[0,:] = location + np.array([dimension[2]/2,-dimension[0],dimension[1]/2])
-        corner[1,:] = corner[0,:] + np.array([-dimension[-1],0,0])
-        corner[2,:] = corner[1,:] + np.array([0,0,-dimension[1]])
-        corner[3,:] = corner[2,:] + np.array([dimension[2],0,0])
-        corner[4,:] = corner[0,:] + np.array([0,dimension[0],0])
-        corner[5,:] = corner[4,:] + np.array([0,0,-dimension[1]])
-        corner[6,:] = corner[5,:] + np.array([0,0,-dimension[1]])
-        corner[7,:] = corner[6,:] + np.array([dimension[2],0,0])
+
+        corner[0,:] = location + np.array([bbox_length/2,-bbox_height,bbox_width/2])
+        corner[1,:] = corner[0,:] + np.array([-bbox_length,0,0])
+        corner[2,:] = corner[1,:] + np.array([0,0,-bbox_width])
+        corner[3,:] = corner[2,:] + np.array([bbox_length,0,0])
+        for ind in range(4):
+            corner[ind+4,:] = corner[ind,:] + np.array([0,bbox_height,0])
         # Rotate along the y-axis
-        #R = np.array([[np.cos(rotation_y),0,np.sin(rotation_y),0],[0,1,0,0],[-np.sin(rotation_y),0,np.cos(rotation_y),0],[0,0,0,1]])
-        #ind = 0
-        #for point in corner:
-        #    corner[ind,:] = np.dot(R,point)
-        #    ind += 1
+        T = np.array([[location[0]],[location[1]-bbox_height/2],[location[2]]])
+        R = np.array([[np.cos(rotation_y),0,np.sin(rotation_y)],[0,1,0],[-np.sin(rotation_y),0,np.cos(rotation_y)]])
+        R1 = np.block([[R,np.dot(-R,T)+T],[0,0,0,1]])
+        ind = 0
+        for point in corner:
+            pos= np.dot(R1,point)
+            pos /= pos[-1]
+            corner[ind,:] = pos[:-1]
+            ind += 1
         corners[i,:,:] = corner
         i += 1
     visualizer.update_boxes(corners)

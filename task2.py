@@ -53,42 +53,55 @@ def draw_bbox( img , objects , R1 , R2 ):
         bbox_height = dimension[0]
         bbox_width = dimension[1]
         bbox_length =  dimension[2]
-        # Right, Down, Front (X,Y,Z)
+        # # Right, Down, Front (X,Y,Z)
         location = np.array(individual[11:14])
         bbox_x = location[0]
         bbox_y = location[1]
         bbox_z = location[2]
         rotation_y = individual[14]
         corner = np.zeros([8,3])
-        corner[0,:] = location + np.array([bbox_width/2,-bbox_height, bbox_length/2])
-        corner[1,:] = corner[0,:] + np.array([-bbox_width ,0 , 0])
-        corner[2,:] = corner[1,:] + np.array([0 ,0,-bbox_length])
-        corner[3,:] = corner[2,:] + np.array([bbox_width, 0, 0])
-        corner[4,:] = corner[0,:] + np.array([0, bbox_height ,0])
-        corner[5,:] = corner[4,:] + np.array([-bbox_width,0, 0])
-        corner[6,:] = corner[5,:] + np.array([0,0,-bbox_length])
-        corner[7,:] = corner[6,:] + np.array([bbox_width,0,0])
+        # corner[0,:] = location + np.array([bbox_width/2,-bbox_height, bbox_length/2])
+        # corner[1,:] = corner[0,:] + np.array([-bbox_width ,0 , 0])
+        # corner[2,:] = corner[1,:] + np.array([0 ,0,-bbox_length])
+        # corner[3,:] = corner[2,:] + np.array([bbox_width, 0, 0])
+        # corner[4,:] = corner[0,:] + np.array([0, bbox_height ,0])
+        # corner[5,:] = corner[4,:] + np.array([-bbox_width,0, 0])
+        # corner[6,:] = corner[5,:] + np.array([0,0,-bbox_length])
+        # corner[7,:] = corner[6,:] + np.array([bbox_width,0,0])
+
+
+
+        corner[0,:] = location + np.array([bbox_length/2,-bbox_height,bbox_width/2])
+        corner[1,:] = corner[0,:] + np.array([-bbox_length,0,0])
+        corner[2,:] = corner[1,:] + np.array([0,0,-bbox_width])
+        corner[3,:] = corner[2,:] + np.array([bbox_length,0,0])
+        for ind in range(4):
+            corner[ind+4,:] = corner[ind,:] + np.array([0,bbox_height,0])
         # Rotate along the y-axis
-        #R = np.array([[1,0,0],[0,np.cos(rotation_y),np.sin(rotation_y)],[0,-np.sin(rotation_y),np.cos(rotation_y)]])
-        #ind = 0
-        #for point in corner:
-        #    corner[ind,:] = np.dot(R,point)
-        #    ind += 1
+        T = np.array([[location[0]],[location[1]-bbox_height/2],[location[2]]])
+        R = np.array([[np.cos(rotation_y),0,np.sin(rotation_y)],[0,1,0],[-np.sin(rotation_y),0,np.cos(rotation_y)]])
+        R1 = np.block([[R,np.dot(-R,T)+T],[0,0,0,1]])
+        ind = 0
+        for point in corner:
+            pos = np.dot(np.dot(R2,R1),np.concatenate((point,[1])))
+            pos /= pos[-1]
+            corner[ind,:] = pos
+            ind += 1
         corners[i,:,:] = corner
         i += 1
     #R = data['P_rect_00']
     # T = A homogeneous translation matrix of 4x4 dimension
     # Used to transform cam0 -> cam2
-    T = np.eye(4)
-    T[0,3] = 0.06
+    # T = np.eye(4)
+    # T[0,3] = 0.06
 
     # Loop over each corner lists 
-    for bbox in corners:
-        for ind,pt in enumerate(bbox):
-            pos = np.dot(np.dot(R2,T),np.concatenate((pt,[1])))
-            pos /= pos[-1]
-            pos = pos.astype(int)
-            bbox[ind]=pos
+    # for bbox in corners:
+    #     for ind,pt in enumerate(bbox):
+    #         pos = np.dot(R2,np.concatenate((pt,[1])))
+    #         pos /= pos[-1]
+    #         pos = pos.astype(int)
+    #         bbox[ind]=pos
     
     # Casting pixels into integer points
     corners = corners.astype(int,copy=False)
@@ -101,7 +114,7 @@ def draw_bbox( img , objects , R1 , R2 ):
 def project_lidar_data_on_image(data  , objects , img , bbox = "no"):
     ''' This method inputs the data to get all the matrices, as well as the object array for segmentation
     also it has a flag for bbox drawing. Finally, it has an image input (uint8)((height,width ,3)) '''
-    R1 = data["T_cam2_velo"] # this consitutes our extrinsic parameters matrix
+    R1 = data["T_cam0_velo"] # this consitutes our extrinsic parameters matrix
     R2 = data["P_rect_20"] #this constitues our intrinsic parameters matrix
     # Both R1 and R2 constitute the camera calibration of our scene that helps project the 3D lidar points to a 2D image plane
     velodyne = data['velodyne']
@@ -195,7 +208,7 @@ def project_lidar_data_on_image(data  , objects , img , bbox = "no"):
 ########################################### MAIN ################################
 def main():
     print("So let's start the task")
-    data_path = os.path.join("./data", "data.p") # change to data.p for submission
+    data_path = os.path.join("./data", "demo.p") # change to data.p for submission
     data = load_data(data_path)
     velodyne =  data['velodyne']
     objects = data['objects']

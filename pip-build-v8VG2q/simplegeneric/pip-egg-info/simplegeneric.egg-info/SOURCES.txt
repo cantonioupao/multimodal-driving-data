@@ -1,0 +1,7 @@
+README.txt
+setup.cfg
+simplegeneric.py
+pip-egg-info/simplegeneric.egg-info/PKG-INFO
+pip-egg-info/simplegeneric.egg-info/SOURCES.txt
+pip-egg-info/simplegeneric.egg-info/dependency_links.txt
+pip-egg-info/simplegeneric.egg-info/top_level.txt
