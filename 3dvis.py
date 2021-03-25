@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 # Deep Learning for Autonomous Driving
 # Material for Problem 2 of Project 1
 # For further questions contact Ozan Unal, ozan.unal@vision.ee.ethz.ch
@@ -125,7 +125,6 @@ if __name__ == '__main__':
 
 
 
-=======
 # Deep Learning for Autonomous Driving
 # Material for Problem 2 of Project 1
 # For further questions contact Ozan Unal, ozan.unal@vision.ee.ethz.ch
@@ -271,4 +270,3 @@ if __name__ == '__main__':
 	vispy.app.run()
 
 
->>>>>>> 91b4c8ee24d8bff22c4492fa657a264e2c1e6f63
