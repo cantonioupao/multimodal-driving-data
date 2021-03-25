@@ -39,7 +39,11 @@ class Visualizer():
         Task 2: Change this function such that each point
         is colored depending on its semantic label
         '''
-        
+        R1 = data["T_cam0_velo"]
+        for i,point in enumerate(points):
+            pos = np.dot(R1,np.concatenate((point,[1])))
+            pos /= pos[-1]
+            points[i,:] = pos[:-1]
         color = np.empty([points.shape[0],3])
         for ind,label in enumerate(self.data['sem_label']):
             color[ind,:] = self.data['color_map'][label[0]]
