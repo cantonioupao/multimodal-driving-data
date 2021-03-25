@@ -1,6 +1,7 @@
 # Deep Learning for Autonomous Driving
 # Material for the 3rd and 4th Problems of Project 1
 # For further questions contact Dengxin Dai, dai@vision.ee.ethz.ch
+
 import numpy as np
 import cv2
 import matplotlib.pyplot as plt
@@ -55,55 +56,37 @@ def calib_velo2cam(filepath):
     return R, T
 
 
-# def calib_cam2cam(filepath, mode):
-#     """
-#     If your image is 'rectified image' :
-#         get only Projection(P : 3x4) matrix is enough
-#     but if your image is 'distorted image'(not rectified image) :
-#         you need undistortion step using distortion coefficients(5 : D)
-#
-#     in this code, we'll get P matrix since we're using rectified image.
-#     in this code, we set filepath = 'yourpath/2011_09_26_drive_0029_sync/calib_cam_to_cam.txt' and mode = '02'
-#     """
-#     with open(filepath, "r") as f:
-#         file = f.readlines()
-#
-#         for line in file:
-#             (key, val) = line.split(':', 1)
-#             if key == ('P_rect_' + mode):
-#                 P_ = np.fromstring(val, sep=' ')
-#                 P_ = P_.reshape(3, 4)
-#                 # erase 4th column ([0,0,0])
-#                 P_ = P_[:3, :3]
-#     return P_
-
-
-
 def calib_cam2cam(filepath, mode):
     """
-    projection matrix from reference camera coordinates to a point on the ith camera plan
-    in our case, mode is '02'
-    the rectifying rotation matrix "R_rect_00" of the referece camera needs to be considered for accurate projection
-    lidar to cam2: first project lidar pts to cam0 by the matrices returned by calib_velo2cam, and
-    then transform the projected pts with the matrix returned by this function
+    If your image is 'rectified image' :
+        get only Projection(P : 3x4) matrix is enough
+    but if your image is 'distorted image'(not rectified image) :
+        you need undistortion step using distortion coefficients(5 : D)
+
+    in this code, we'll get P matrix since we're using rectified image.
+    in this code, we set filepath = 'yourpath/2011_09_26_drive_0029_sync/calib_cam_to_cam.txt' and mode = '02'
+    
+    This is a confusing method. So in case we require the R matrix for the non-rectified image, we can get it as
+    well
     """
     with open(filepath, "r") as f:
         file = f.readlines()
+        P_ = 0
+        P_rect = 0
 
         for line in file:
             (key, val) = line.split(':', 1)
             if key == ('P_rect_' + mode):
+                P_rect = np.fromstring(val, sep=' ')
+                P_rect = P_rect.reshape(3, 4)
+                # erase 4th column ([0,0,0])
+                P_rect = P_rect[:3, :3]
+            else if key == ('P_' + mode):
                 P_ = np.fromstring(val, sep=' ')
                 P_ = P_.reshape(3, 4)
                 # erase 4th column ([0,0,0])
-                #P_ = P_[:3, :3]
-            if key == 'R_rect_00':
-                R_rect_00 = np.fromstring(val, sep=' ')
-                R_rect_00 = R_rect_00.reshape(3, 3)
-                R_rect_00_ = np.zeros((4,4))
-                R_rect_00_[:-1,:-1] = R_rect_00
-
-    return np.matmul(P_,R_rect_00_)
+                P_ = P_[:3, :3]
+    return P_rect , P_
 
 
 
@@ -151,3 +134,4 @@ def load_oxts_angular_rate(oxts_f):
         angular_rate_l = data[0][21]
         angular_rate_u = data[0][22]
     return angular_rate_f, angular_rate_l, angular_rate_u
+
