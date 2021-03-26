@@ -4,6 +4,7 @@ This is Project 1 of DLAD (Deep learning for Autonomous Driving) that focuses on
 
 ## Task 1 - BEV
 Task 1, focuses on getting the BEV (Bird Eye View) from the velodyne point cloud. The BEv resolution is 0.2 in each direction. The BEV is shown in the figure below.
+
 ![BEV of Velodyne point cloud](/pics/task1bev.jpg)
 
 ## Task 2 - Semantic Segmentation & Bbox Projection
