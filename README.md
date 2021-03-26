@@ -4,7 +4,7 @@ This is Project 1 of DLAD (Deep learning for Autonomous Driving) that focuses on
 
 ## Task 1 - BEV
 Task 1, focuses on getting the BEV (Bird Eye View) from the velodyne point cloud. The BEv resolution is 0.2 in each direction. The BEV is shown in the figure below.
-![BEV of Velodyne point cloud](/pics/task1.jpg)
+![BEV of Velodyne point cloud](/pics/task1bev.jpg)
 
 ## Task 2 - Semantic Segmentation & Bbox Projection
 Task 2 is about projecting the velodyne pint cloud on the image. To achieve this the extrinsic and instrinsic projection matrices are utilized, after the velodyne points are augmeneted with an extra dimension, to implement homegenous coordinates. The extrinsic projection matrix is used, to transform the velodyne point cloud from the world coordinate system, to the camera cooridnate system (cam0). Then the intrinsic projection matrix is further utilized, to transform the points to the camera reference frame of the other camera(cam2). Finally each point of the cloud, now corresponds to a homegenous matrix(3x1) that holds (u,v,1),where u and v correspond to the image2 pixels. Image 2 corresponds naturally to the image taken by camera 2. Also, semantic segmentation of the image scene was performed and different objects have been asssigned different colors
@@ -18,7 +18,7 @@ The final image with semantic segmentation and the translated bounding boxes can
 Task 3 emphasized on projecting on image 2, each line of scan from the 64 line of scans of the velodyne. Each different line id, is projected with a different color depending on each id number. The line colors start with the first 8 HSV colors and for the rest of the lines, the colors iterate. ![Laser Line of Scans projected](/pics/task3.jpg)
 
 ## Task 4 - Motion Distrotion
-Task 4 consisted of 2 subparts. Initially it was the projection of the velodyne points on the image frame, where color would signify the distance of the car from each object/pixel on the scene. The farther away the less red an object/pixel appears in the image.
+Task 4 consisted of 2 subparts. Initially it was the projection of the velodyne points on the image frame, where color would signify the distance of the car from each object/pixel on the scene. The farther away the less blue an object/pixel appears in the image.
 The difficult part for this exercise is that we had to construct the extrinsic projection matrix ourselves by stacking the R (rotation matrix) and T (translation matrix) together as one => (R|T). 
 Then after using it to transform to the cam0 coordinate system, we had to use the rectified projection matrix to change camera reference frame. Remember that again we were working with homogenous coordinates to enable simpler and easier transformations among coordinate systems. For the second part of the task, the motion blur caused by the motion of the car, as well as the rotation of the velodyne has to be removed. 
 During velodyne projection, because of the motion, the points seemed off, relative to the actual image frame. 
